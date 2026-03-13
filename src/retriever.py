@@ -1,10 +1,10 @@
-from qdrant_client import QdrantClient
-from embedder import embed
-from config import COLLECTION_NAME, TOP_K
 import os
+from qdrant_client import QdrantClient
+
+from src.embedder import embed
+from src.config import COLLECTION_NAME, TOP_K
 
 
-# Kết nối Qdrant
 client = QdrantClient(
     url=os.getenv("QDRANT_URL"),
     api_key=os.getenv("QDRANT_API_KEY")
@@ -13,10 +13,8 @@ client = QdrantClient(
 
 def retrieve(question):
 
-    # embedding câu hỏi
     vector = embed(question)
 
-    # search vector
     results = client.query_points(
         collection_name=COLLECTION_NAME,
         query=vector,
@@ -28,8 +26,7 @@ def retrieve(question):
     for r in results.points:
 
         docs.append({
-            "text": r.payload["text"],
-            "title": r.payload["title"]
+            "text": r.payload["text"]
         })
 
     return docs

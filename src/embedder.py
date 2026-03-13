@@ -1,7 +1,9 @@
 from sentence_transformers import SentenceTransformer
-from config import EMBED_MODEL
 
-model = SentenceTransformer(EMBED_MODEL)
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
 def embed(text):
-    return model.encode(text).tolist()
+
+    vector = model.encode(text)
+
+    return vector.tolist()

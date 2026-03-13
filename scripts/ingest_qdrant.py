@@ -1,31 +1,55 @@
-from dataset_loader import load_hotpot_dataset, convert_to_documents
-from embedding_model import EmbeddingModel
-from qdrant_db import QdrantDB
+import os
+from datasets import load_from_disk
 
-from tqdm import tqdm
+from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct, VectorParams, Distance
+
+from src.embedder import embed
+from src.config import COLLECTION_NAME
 
 
-dataset = load_hotpot_dataset()
+dataset = load_from_disk("hotpot_mini_1k")
 
-docs = convert_to_documents(dataset)
 
-embedder = EmbeddingModel()
-db = QdrantDB()
+client = QdrantClient(
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
+)
 
-db.create_collection()
+
+client.recreate_collection(
+    collection_name=COLLECTION_NAME,
+    vectors_config=VectorParams(
+        size=384,
+        distance=Distance.COSINE
+    )
+)
+
 
 points = []
 
-for i, doc in enumerate(tqdm(docs)):
+for idx, item in enumerate(dataset):
 
-    vec = embedder.embed(doc["text"])
+    question = item["question"]
 
-    points.append({
-        "id": i,
-        "vector": vec,
-        "payload": doc
-    })
+    context = str(item["context"])
 
-db.insert_points(points)
+    text = question + " " + context
 
-print("Inserted", len(points), "documents")
+    vector = embed(text)
+
+    points.append(
+        PointStruct(
+            id=idx,
+            vector=vector,
+            payload={"text": text}
+        )
+    )
+
+
+client.upsert(
+    collection_name=COLLECTION_NAME,
+    points=points
+)
+
+print("Inserted:", len(points))

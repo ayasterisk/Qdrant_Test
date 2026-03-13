@@ -1,36 +1,31 @@
-from retriever import retrieve
-from llm import ask_llm
+from src.retriever import retrieve
+from src.llm import ask_llm
 
 
 def multi_hop_rag(question):
 
-    # Hop 1
     docs1 = retrieve(question)
 
     context1 = "\n".join([d["text"] for d in docs1])
 
     sub_prompt = f"""
-Given the question:
-
+Question:
 {question}
 
 Context:
 {context1}
 
-Generate a follow-up question needed to answer the original question.
+Generate a follow-up question.
 """
 
     sub_question = ask_llm(sub_prompt)
 
-    print("Sub-question:", sub_question)
-
-    # Hop 2
     docs2 = retrieve(sub_question)
 
     context2 = "\n".join([d["text"] for d in docs2])
 
     final_prompt = f"""
-Answer the question using the context.
+Answer the question.
 
 Question:
 {question}
