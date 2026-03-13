@@ -1,8 +1,8 @@
 import os
 from qdrant_client import QdrantClient
 
-from src.embedder import embed
-from src.config import COLLECTION_NAME, TOP_K
+from embedder import embed
+from config import COLLECTION_NAME, TOP_K
 
 
 client = QdrantClient(

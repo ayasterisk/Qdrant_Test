@@ -1,13 +1,25 @@
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = OpenAI(
     api_key=os.getenv("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com"
 )
 
+def ask_llm(question, context):
 
-def ask_llm(prompt):
+    prompt = f"""
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
 
     response = client.chat.completions.create(
         model="deepseek-chat",
