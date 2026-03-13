@@ -1,0 +1,14 @@
+Pipeline:
+HotpotQA dataset
+    Document chunking
+        Embedding
+            Qdrant vector DB
+                Retriever
+                    LLM (DeepSeek)
+                        Answer
+Agent:
+User question
+    Agent
+        Vector Search Tool (Qdrant)
+            LLM reasoning
+                Final answer

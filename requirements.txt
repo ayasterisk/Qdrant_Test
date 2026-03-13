@@ -1,0 +1,8 @@
+qdrant-client
+sentence-transformers
+datasets
+pandas
+langchain
+langchain-community
+tqdm
+python-dotenv
