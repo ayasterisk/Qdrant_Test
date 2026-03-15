@@ -12,6 +12,16 @@ client = OpenAI(
 def ask_llm(question, context):
 
     prompt = f"""
+You are a multi-hop QA system.
+
+Use the context to answer the question.
+
+Instructions:
+1. Look for relevant facts in the context
+2. Combine information if needed
+3. If the answer is not in the context, say:
+"I do not have enough knowledge to answer this question."
+
 Context:
 {context}
 
